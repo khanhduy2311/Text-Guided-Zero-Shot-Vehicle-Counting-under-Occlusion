@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080A0B">
+<meta name="description" content="Demo nghiên cứu đếm phương tiện theo mô tả văn bản dưới che khuất. Bốn nhánh suy luận trên ảnh tải lên: CountGD++ A3 + SigLIP2, A3 + SAM 3, CountGD-Box + SAM 3 và CountGD++ gốc.">
+<title>CountLab — Đếm phương tiện theo mô tả</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/BeVietnamPro-Regular.ttf" as="font" type="font/ttf" crossorigin>
+<script src="/assets/theme-init.js?v=void-20261117">
+</script>
+<link rel="stylesheet" href="/style.css?v=original-four-1">
+<script src="/app.js?v=original-four-1" defer>
+</script>
+<style id="prompt-study-style">#prompt-study .prompt-table caption{text-align:left;padding:12px;color:var(--muted);font-size:12px}#prompt-study .prompt-table td{font-variant-numeric:tabular-nums}#prompt-study .eval-details>div{min-width:0}#prompt-study summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}</style>
+</head>
+<body>
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<symbol id="i-upload" viewBox="0 0 24 24">
+<path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/>
+</symbol>
+<symbol id="i-image" viewBox="0 0 24 24">
+<rect x="3" y="3" width="18" height="18" rx="3"/>
+<circle cx="8" cy="8" r="1.4"/>
+<path d="m3 17 5-5 4 4 4-6 5 7"/>
+</symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24">
+<path d="M4 12h16m-6-6 6 6-6 6"/>
+</symbol>
+<symbol id="i-download" viewBox="0 0 24 24">
+<path d="M12 3v13m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>
+</symbol>
+<symbol id="i-expand" viewBox="0 0 24 24">
+<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>
+</symbol>
+<symbol id="i-box" viewBox="0 0 24 24">
+<rect x="4" y="4" width="16" height="16" rx="1"/>
+<path d="M4 9V4h5m6 0h5v5M4 15v5h5m6 0h5v-5"/>
+</symbol>
+<symbol id="i-clock" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="9"/>
+<path d="M12 7v5l3 2"/>
+</symbol>
+<symbol id="i-close" viewBox="0 0 24 24">
+<path d="m6 6 12 12M6 18 18 6"/>
+</symbol>
+<symbol id="i-info" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="9"/>
+<path d="M12 11v6m0-10v1"/>
+</symbol>
+<symbol id="i-check" viewBox="0 0 24 24">
+<path d="m5 12 4 4L19 6"/>
+</symbol>
+<symbol id="i-trash" viewBox="0 0 24 24">
+<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>
+</symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24">
+<path d="m7 10 5 5 5-5"/>
+</symbol>
+<symbol id="i-grid" viewBox="0 0 24 24">
+<rect x="3" y="3" width="7" height="7" rx="1"/>
+<rect x="14" y="3" width="7" height="7" rx="1"/>
+<rect x="3" y="14" width="7" height="7" rx="1"/>
+<rect x="14" y="14" width="7" height="7" rx="1"/>
+</symbol>
+<symbol id="i-chart" viewBox="0 0 24 24">
+<path d="M4 3v17h17M8 16v-5m5 5V6m5 10V9"/>
+</symbol>
+<symbol id="i-flow" viewBox="0 0 24 24">
+<rect x="8" y="2" width="8" height="5" rx="1"/>
+<rect x="2" y="17" width="8" height="5" rx="1"/>
+<rect x="14" y="17" width="8" height="5" rx="1"/>
+<path d="M12 7v5H6v5m6-5h6v5"/>
+</symbol>
+<symbol id="i-book" viewBox="0 0 24 24">
+<path d="M12 5c-3-2-6-2-10-1v15c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1v15"/>
+</symbol>
+<symbol id="i-sun" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="4"/>
+<path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>
+</symbol>
+<symbol id="i-moon" viewBox="0 0 24 24">
+<path d="M20.8 14A9 9 0 0 1 10 3.2 9 9 0 1 0 20.8 14Z"/>
+</symbol>
+<symbol id="i-menu" viewBox="0 0 24 24">
+<path d="M4 6h16M4 12h16M4 18h16"/>
+</symbol>
+</defs>
+</svg>
+<a class="skip-link" href="#main-content">Đến nội dung chính</a>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar" aria-label="Điều hướng CountLab">
+<div class="sidebar-brand">
+<a class="brand" href="#count">
+<img src="/favicon.svg" width="36" height="36" alt="">
+<span class="brand-name">COUNT<span class="brand-slash"> / </span>LAB<small>Vehicle intelligence</small>
+</span>
+</a>
+<button type="button" class="icon-button drawer-close" id="menu-close" aria-label="Đóng điều hướng">
+<svg class="icon" aria-hidden="true">
+<use href="#i-close"/>
+</svg>
+</button>
+</div>
+<div class="project-chip">
+<span class="project-signal" aria-hidden="true">
+</span>
+<span>Research workspace<small>Text-guided vehicle counting</small>
+</span>
+<span class="project-corner" aria-hidden="true">↗</span>
+</div>
+<div class="sidebar-tabs" role="tablist" aria-label="Không gian làm việc" aria-orientation="vertical">
+<button type="button" role="tab" id="tab-count" data-page="count" aria-controls="panel-count" aria-selected="true" tabindex="0">
+<svg class="icon" aria-hidden="true">
+<use href="#i-box"/>
+</svg>
+<span>Đếm phương tiện</span>
+<span id="nav-job-dot" class="nav-job-dot" aria-label="Tác vụ đang chạy" hidden>
+</span>
+</button>
+<button type="button" role="tab" id="tab-examples" data-page="examples" aria-controls="panel-examples" aria-selected="false" tabindex="-1">
+<svg class="icon" aria-hidden="true">
+<use href="#i-grid"/>
+</svg>
+<span>Ảnh mẫu</span>
+</button>
+<button type="button" role="tab" id="tab-history" data-page="history" aria-controls="panel-history" aria-selected="false" tabindex="-1">
+<svg class="icon" aria-hidden="true">
+<use href="#i-clock"/>
+</svg>
+<span>Lịch sử</span>
+</button>
+<span class="nav-divider" aria-hidden="true">
+</span>
+<button type="button" role="tab" id="tab-method" data-page="method" aria-controls="panel-method" aria-selected="false" tabindex="-1">
+<svg class="icon" aria-hidden="true">
+<use href="#i-flow"/>
+</svg>
+<span>Phương pháp</span>
+</button>
+<button type="button" role="tab" id="tab-evaluation" data-page="evaluation" aria-controls="panel-evaluation" aria-selected="false" tabindex="-1">
+<svg class="icon" aria-hidden="true">
+<use href="#i-chart"/>
+</svg>
+<span>Đánh giá</span>
+</button>
+<button type="button" role="tab" id="tab-help" data-page="help" aria-controls="panel-help" aria-selected="false" tabindex="-1">
+<svg class="icon" aria-hidden="true">
+<use href="#i-book"/>
+</svg>
+<span>Hướng dẫn</span>
+</button>
+</div>
+<div class="sidebar-bottom">
+<div class="model-status">
+<span class="model-square">A3</span>
+<div><span id="side-model">CountGD++ + SigLIP2</span><small>Đếm & kiểm tra mô tả</small>
+</div>
+</div>
+<div class="theme-control" role="group" aria-label="Chế độ giao diện">
+<button type="button" data-theme-choice="light" aria-pressed="true">
+<svg class="icon" aria-hidden="true">
+<use href="#i-sun"/>
+</svg>Sáng</button>
+<button type="button" data-theme-choice="dark" aria-pressed="false">
+<svg class="icon" aria-hidden="true">
+<use href="#i-moon"/>
+</svg>Tối</button>
+</div>
+<p class="sidebar-footnote">Nghiên cứu phương tiện dưới che khuất</p>
+</div>
+</aside>
+<button type="button" id="drawer-backdrop" class="drawer-backdrop" aria-label="Đóng điều hướng" hidden>
+</button>
+<div class="app-body">
+<header class="app-bar">
+<button type="button" id="menu-toggle" class="icon-button" aria-label="Mở điều hướng" aria-expanded="false" aria-controls="sidebar">
+<svg class="icon" aria-hidden="true">
+<use href="#i-menu"/>
+</svg>
+</button>
+<span class="app-location">
+<span class="location-prefix">CountLab</span> <span>/</span> <strong id="page-location">Đếm phương tiện</strong>
+</span>
+<button type="button" id="current-task" class="current-task" hidden>Xem tác vụ</button>
+<div class="engine-status" id="engine-status" role="status">
+<span class="status-dot">
+</span>
+<span id="engine-text">Đang kết nối</span>
+</div>
+</header>
+<main id="main-content" class="workspace" tabindex="-1">
+<section id="panel-count" class="page-panel " role="tabpanel" aria-labelledby="tab-count" tabindex="-1">
+<div class="vision-intro">
+ <div class="intro-copy">
+<p class="intro-kicker">
+<span aria-hidden="true">
+</span>Text-guided vehicle counting</p>
+<h1>
+<span>DESCRIBE.</span>
+<br>
+<span class="intro-accent">DETECT. COUNT.</span>
+</h1>
+<p class="intro-description">Đếm phương tiện theo cách bạn mô tả.<br>Tải ảnh, viết yêu cầu và kiểm tra từng vị trí.</p>
+</div>
+ <div class="vision-art" aria-hidden="true">
+  <span class="art-label">VISION ENGINE / A3</span>
+  <svg viewBox="0 0 440 230" class="vehicle-art" xmlns="http://www.w3.org/2000/svg">
+   <defs><radialGradient id="vehicle-v2-glow"><stop stop-color="#9972DC" stop-opacity=".18"/><stop offset="1" stop-color="#9972DC" stop-opacity="0"/></radialGradient></defs>
+   <ellipse cx="226" cy="121" rx="204" ry="105" fill="url(#vehicle-v2-glow)"/>
+   <g fill="none" stroke="currentColor" opacity=".12"><path d="M24 164 222 88 422 161 224 219ZM63 182 262 106M108 203 304 124M70 146 265 203M112 129 305 187"/></g>
+   <g fill="none" stroke="#C5F66A" opacity=".35"><path d="m22 163 64 25m270-52 66 25-35 14"/><rect x="19" y="160" width="5" height="5" fill="#C5F66A"/></g>
+   <ellipse cx="225" cy="188" rx="146" ry="17" fill="#000" opacity=".15"/>
+   <image href="/assets/countlab-vehicle-v2.webp" x="10" y="20" width="420" height="200" preserveAspectRatio="xMidYMid meet"/>
+   <g fill="none" stroke="#C5F66A" stroke-width="1.2" opacity=".85"><path d="M33 72V32h42M365 32h42v36M407 173v34h-42M75 207H33v-33"/></g>
+   <path d="M408 47h18" fill="none" stroke="#C5F66A" stroke-dasharray="2 4" opacity=".6"/><circle cx="428" cy="47" r="2" fill="#C5F66A"/>
+  </svg>
+  <span class="art-bottom">TEXT <span>→</span> POSITION <span>→</span> COUNT</span>
+ </div>
+</div>
+<div class="bench-heading">
+<h2>Không gian đếm</h2>
+<span>
+<span class="signal-square" aria-hidden="true">
+</span><span id="bench-model">CountGD++ A3 + SigLIP2</span></span>
+</div> <div class="workbench">
+  <aside class="input-panel" aria-label="Thiết lập suy luận">
+<div class="panel-heading">
+<h2>Thiết lập tác vụ</h2>
+<span class="panel-tag">INPUT / 01</span>
+</div>
+<div class="branch-control">
+<label for="model-branch">Nhánh mô hình</label>
+<select id="model-branch" aria-describedby="branch-description">
+<option value="a3">CountGD++ A3 + SigLIP2</option>
+<option value="a3_sam3">CountGD++ A3 + SAM 3</option>
+<option value="sam3">CountGD-Box + SAM 3</option>
+<option value="original">CountGD++ gốc</option>
+</select>
+<small id="branch-description">A3 định vị xe, SigLIP2 kiểm tra màu và thuộc tính.</small>
+</div>
+   <section class="input-section">
+<div class="section-heading">
+<h2>
+<span class="step-number">1</span>Ảnh đầu vào</h2>
+<button class="text-button" id="clear-image" type="button">Đặt lại</button>
+</div>
+    <div id="dropzone" class="dropzone">
+<input type="file" id="file-input" tabindex="-1" accept="image/jpeg,image/png,image/webp" aria-label="Chọn ảnh JPG, PNG hoặc WebP">
+<button id="browse" type="button" class="upload-button">
+<span class="upload-symbol">
+<svg class="icon" aria-hidden="true">
+<use href="#i-upload"/>
+</svg>
+</span>
+<strong>Tải ảnh của bạn</strong>
+<span>Kéo thả hoặc chọn file · Tối đa 10 MB</span>
+</button>
+<div class="file-summary" id="file-summary" hidden>
+<img id="file-thumb" alt="Ảnh đầu vào đã chọn">
+<div>
+<strong id="file-name">
+</strong>
+<span id="file-meta">
+</span>
+</div>
+<button type="button" id="replace-file" class="icon-button" title="Đổi ảnh" aria-label="Đổi ảnh">
+<svg class="icon" aria-hidden="true">
+<use href="#i-upload"/>
+</svg>
+</button>
+</div>
+</div>
+    <p class="field-error" id="file-error" role="alert" hidden>
+</p>
+<button type="button" class="sample-link" data-go="examples">
+<svg class="icon" aria-hidden="true">
+<use href="#i-grid"/>
+</svg>Chọn từ thư viện ảnh mẫu<svg class="icon" aria-hidden="true">
+<use href="#i-arrow"/>
+</svg>
+</button>
+   </section>
+   <section class="input-section query-section">
+<h2>
+<span class="step-number">2</span>Mô tả vật cần đếm</h2>
+<label class="visually-hidden" for="prompt">Mô tả bằng tiếng Việt hoặc tiếng Anh</label>
+<div class="prompt-wrap">
+<textarea id="prompt" rows="2" maxlength="160" placeholder="Ví dụ: green bus, black truck, xe ô tô màu đỏ" spellcheck="false" aria-describedby="query-help query-error">
+</textarea>
+<span id="prompt-length" aria-hidden="true">0/160</span>
+</div>
+    <p id="query-help" class="helper">Mô tả tự do bằng tiếng Việt hoặc tiếng Anh.</p>
+<div class="prompt-suggestions" aria-label="Mô tả gợi ý">
+<button type="button" data-prompt="red car">
+<span class="swatch red">
+</span>red car</button>
+<button type="button" data-prompt="green bus">
+<span class="swatch green">
+</span>green bus</button>
+<button type="button" data-prompt="black truck">
+<span class="swatch black">
+</span>black truck</button>
+</div>
+    <div class="query-understanding" id="query-understanding" hidden>
+<svg class="icon" aria-hidden="true">
+<use href="#i-check"/>
+</svg>
+<div>
+<span>Truy vấn được hiểu là</span>
+<strong id="query-canonical">
+</strong>
+<details class="query-details">
+<summary>Cách mô hình xử lý</summary>
+<p id="query-detail" class="query-detail">
+</p>
+</details>
+</div>
+</div>
+<p class="field-error" id="query-error" role="alert" hidden>
+</p>
+    <button type="button" class="capabilities-button" data-go="help">Hướng dẫn viết mô tả<svg class="icon" aria-hidden="true">
+<use href="#i-info"/>
+</svg>
+</button>
+    <button type="button" id="run" class="run-button" disabled>
+<span id="run-label">Đếm phương tiện</span>
+<svg class="icon" aria-hidden="true">
+<use href="#i-arrow"/>
+</svg>
+</button>
+<div class="run-caption" id="run-caption">Nhấn Ctrl / ⌘ + Enter để bắt đầu</div>
+<button type="button" id="view-result" class="view-result-button" hidden>Xem kết quả bên dưới<svg class="icon" aria-hidden="true">
+<use href="#i-arrow"/>
+</svg>
+</button>
+    <div id="job-progress" class="job-progress" hidden role="status">
+<div class="progress-heading">
+<span class="spinner" aria-hidden="true">
+</span>
+<strong id="progress-stage">Đang chờ</strong>
+<span id="elapsed">0s</span>
+</div>
+<div class="progress-track">
+<span id="progress-bar">
+</span>
+</div>
+<div class="progress-foot">
+<span id="queue-detail">Hàng đợi tuần tự</span>
+<button type="button" id="cancel-run">Hủy</button>
+</div>
+</div>
+<p class="field-error" id="job-error" role="alert" hidden>
+</p>
+   </section>
+
+   <div class="privacy-note">
+<svg class="icon" aria-hidden="true">
+<use href="#i-clock"/>
+</svg>
+<p>Ảnh và kết quả lưu tạm tối đa 12 giờ. Bạn có thể xóa sớm trong lịch sử.</p>
+</div>
+  </aside>
+  <section class="result-panel" id="results" tabindex="-1" aria-label="Ảnh và kết quả">
+   <div class="viewer-card">
+<div class="viewer-toolbar">
+<span class="viewer-title">
+<svg class="icon" aria-hidden="true">
+<use href="#i-box"/>
+</svg>VIEWPORT</span>
+<div class="view-tabs" role="group" aria-label="Chế độ xem">
+<button type="button" data-view="input" aria-pressed="true">Ảnh gốc</button>
+<button type="button" data-view="result" aria-pressed="false" disabled>Kết quả</button>
+<button type="button" data-view="compare" aria-pressed="false" disabled>Đối chiếu</button>
+</div>
+<div class="viewer-actions">
+<span id="image-dimensions" class="image-dimensions">
+</span>
+<button type="button" id="expand" class="icon-button" aria-label="Phóng to ảnh" title="Phóng to ảnh" disabled>
+<svg class="icon" aria-hidden="true">
+<use href="#i-expand"/>
+</svg>
+</button>
+</div>
+</div>
+    <div class="image-stage" id="image-stage">
+<div id="canvas-empty" class="canvas-empty">
+<svg class="icon" aria-hidden="true">
+<use href="#i-image"/>
+</svg>
+<h3>Ảnh của bạn, câu hỏi của bạn.</h3>
+<p>Tải ảnh hoặc chọn một tình huống mẫu để bắt đầu.</p>
+</div>
+<div class="image-frame" id="image-frame" hidden>
+<img id="main-image" alt="Ảnh đầu vào để đếm phương tiện" draggable="false">
+<svg id="overlay" xmlns="http://www.w3.org/2000/svg" aria-label="Các vị trí phương tiện được dự đoán">
+</svg>
+<div id="compare-line" class="compare-line" hidden>
+<span>↔</span>
+</div>
+</div>
+<span id="canvas-badge" class="canvas-badge" hidden>Ảnh đầu vào</span>
+<div id="canvas-loading" class="canvas-loading" hidden>
+<span class="spinner">
+</span>
+<span>Đang suy luận từ ảnh</span>
+</div>
+</div>
+    <div id="compare-control" class="compare-control" hidden>
+<span>Ảnh gốc</span>
+<label class="visually-hidden" for="compare-slider">Vị trí đối chiếu ảnh gốc và dự đoán</label>
+<input id="compare-slider" type="range" min="0" max="100" value="50">
+<span>Dự đoán</span>
+</div>
+    <div class="viewer-footer">
+<span id="viewer-caption">Chưa có kết quả suy luận</span>
+<div class="display-controls" id="display-controls" hidden>
+<label>
+<input type="checkbox" id="show-labels" checked>Số thứ tự</label>
+<label>
+<input type="checkbox" id="show-boxes" checked>Khung định vị</label>
+</div>
+</div>
+   </div>
+   <div class="result-summary" id="result-summary" aria-live="polite">
+<div class="count-block">
+<span class="summary-label">
+<svg class="icon" aria-hidden="true">
+<use href="#i-check"/>
+</svg>Phương tiện phù hợp</span>
+<div>
+<strong id="count">—</strong>
+<span id="count-query">Chưa chạy</span>
+</div>
+</div>
+<div class="summary-stat">
+<span class="summary-label">
+<svg class="icon" aria-hidden="true">
+<use href="#i-box"/>
+</svg>Vị trí đã kiểm tra</span>
+<strong id="candidate-count">—</strong>
+<span id="candidate-detail">Trước khi lọc mô tả</span>
+</div>
+<div class="summary-stat">
+<span class="summary-label">
+<svg class="icon" aria-hidden="true">
+<use href="#i-clock"/>
+</svg>Thời gian suy luận</span>
+<strong id="inference-time">—</strong>
+<span>Không gồm thời gian chờ</span>
+</div>
+</div>
+   <div class="output-card" id="output-card">
+<div class="output-heading">
+<div>
+<h2>Đối tượng được đếm <span id="object-total" class="subtle-count">0</span>
+</h2>
+<p id="objects-hint">Các vị trí tìm được sẽ xuất hiện tại đây.</p>
+</div>
+<div class="download-controls">
+<button type="button" id="download-image" class="secondary-button" disabled>
+<svg class="icon" aria-hidden="true">
+<use href="#i-download"/>
+</svg>Ảnh PNG</button>
+<button type="button" id="download-data" class="secondary-button" aria-expanded="false" aria-controls="download-menu" disabled>Dữ liệu<svg class="icon" aria-hidden="true">
+<use href="#i-chevron"/>
+</svg>
+</button>
+<div id="download-menu" class="download-menu" hidden>
+<a id="download-json" href="#" download>JSON · kết quả đầy đủ</a>
+<a id="download-csv" href="#" download>CSV · danh sách box</a>
+</div>
+</div>
+</div>
+<div id="object-list" class="object-list">
+<p class="empty-list">Chạy mô hình để xem từng đối tượng và điểm tương hợp.</p>
+</div>
+<p class="score-note" id="score-note" hidden>Điểm tương hợp thể hiện mức khớp mô tả của mô hình, không phải xác suất dự đoán đúng.</p>
+</div>
+  </section>
+ </div>
+</section>
+<section id="panel-examples" class="page-panel " role="tabpanel" aria-labelledby="tab-examples" tabindex="-1" hidden>
+<div class="page-heading">
+<div>
+<h1>Thư viện ảnh mẫu</h1>
+<p>Chọn một tình huống để đưa ảnh và mô tả vào không gian đếm.</p>
+</div>
+</div>
+<div id="examples" class="example-grid" aria-label="Ảnh mẫu">
+</div>
+<div class="info-note">
+<svg class="icon" aria-hidden="true">
+<use href="#i-info"/>
+</svg>
+<p>Ảnh mẫu chưa có kết quả mặc định. Chọn ảnh rồi bấm <strong>Đếm phương tiện</strong> để chạy mô hình.</p>
+</div>
+<button type="button" class="secondary-button" data-go="count">Quay lại tác vụ hiện tại</button>
+</section>
+<section id="panel-history" class="page-panel " role="tabpanel" aria-labelledby="tab-history" tabindex="-1" hidden>
+<div class="page-heading">
+<div>
+<h1>Lịch sử suy luận</h1>
+<p>Mở lại, tải xuống hoặc xóa kết quả của trình duyệt này.</p>
+</div>
+</div>
+<div class="history-toolbar">
+<span>Ảnh và kết quả được lưu tối đa 12 giờ.</span>
+<button class="text-button danger-text" id="clear-history" type="button" hidden>Xóa toàn bộ lịch sử</button>
+</div>
+<div id="history-list" class="history-list">
+</div>
+<div class="info-note">
+<svg class="icon" aria-hidden="true">
+<use href="#i-clock"/>
+</svg>
+<p>Lịch sử hiển thị tối đa 8 lần chạy gần nhất. Kết quả có thể hết hạn hoặc mất khi dịch vụ được tạo lại.</p>
+</div>
+</section>
+<section id="panel-method" class="page-panel document-page" role="tabpanel" aria-labelledby="tab-method" tabindex="-1" hidden>
+<div class="page-heading">
+<div>
+<h1>Phương pháp</h1>
+<p>Text-Guided Zero-Shot Vehicle Counting under Occlusion</p>
+</div>
+</div>
+<article class="document-surface method-document">
+<h2>CountGD++ A3 + SigLIP2</h2>
+<p>Demo dùng checkpoint <strong>CountGD++ A3</strong> của đề tài và <strong>SigLIP2</strong> đã cố định. Ảnh tải lên được chạy qua mô hình; không dùng annotation hoặc số đếm có sẵn.</p>
+<ol class="method-steps">
+<li>
+<strong>Hiểu yêu cầu</strong>
+<span>Giữ nội dung mô tả; nhận diện loại xe, màu và vị trí. Câu ngoài các mẫu cũ đi qua nhánh open-text.</span>
+</li>
+<li>
+<strong>Tìm phương tiện</strong>
+<span>A3 dự đoán vị trí từng xe. Nhánh đếm cơ bản dùng filtered_pseudo3; nhánh màu/quan hệ dùng full800. Mô tả mở dùng cả tên loại xe và câu mô tả đầy đủ để đề xuất box.</span>
+</li>
+<li>
+<strong>Kiểm tra điều kiện</strong>
+<span>SigLIP2 xem các crop và mô tả. Truy vấn xe máy có thêm bước xác minh loại xe, độc lập với màu sắc; vùng giữa box được kiểm tra để giảm nhầm với ô tô bên cạnh. Mô tả mở được đối chiếu với các mô tả khác về màu, loại xe hoặc thuộc tính.</span>
+</li>
+<li>
+<strong>Đếm và định vị</strong>
+<span>Trả số đếm, box, điểm mô hình và ảnh có đánh dấu để kiểm tra trực tiếp.</span>
+</li>
+</ol>
+<img class="pipeline-image" src="/assets/pipeline.png" loading="lazy" alt="Pipeline khoa học gồm huấn luyện A3, suy luận màu với SigLIP2 và nhánh đếm cơ bản">
+<p class="fine-print">A3 được huấn luyện nhất quán đặc trưng sạch–che trên dữ liệu nguồn. Demo không phục hồi pixel bị che và không khẳng định nhận diện hoàn hảo mọi trường hợp.</p>
+<h2>CountGD++ gốc</h2>
+<p>Checkpoint chính thức nhận cụm từ như <code>red car</code> và tự tạo khung dự đoán. Dùng cùng ảnh và mô tả để so sánh với các nhánh có bước xác minh riêng.</p>
+<h2>CountGD++ A3 + SAM 3</h2>
+<p>A3 tìm phương tiện theo loại xe. SAM 3 đọc mô tả trên toàn ảnh. Mỗi khung A3 ghép với tối đa một vùng SAM 3 tại IoU ≥ 0,30.</p>
+<h2>CountGD-Box + SAM 3</h2>
+<p>CountGD-Box tinh chỉnh trên VisDrone đề xuất khung theo loại xe. Với <code>red car</code>, CountGD-Box tìm ô tô, còn SAM 3 tìm vùng khớp với cả cụm từ. Mỗi khung được ghép với tối đa một vùng SAM 3 khi IoU đạt 0,30. Số cặp khớp sau khi lọc vị trí là số xe trả về.</p>
+</article>
+</section>
+<section id="panel-evaluation" class="page-panel document-page" role="tabpanel" aria-labelledby="tab-evaluation" tabindex="-1" hidden>
+<div class="page-heading"><div><span class="eyebrow">BENCHMARK</span><h1>Kết quả đánh giá</h1><p>Đếm và định vị phương tiện trên CARPK-OCC. So sánh trực tiếp với bản gốc.</p></div></div>
+<article class="document-surface evaluation-document">
+<section id="carpk-occ-results" aria-labelledby="carpk-occ-title">
+<span class="eyebrow">CARPK-OCC · BẢN TỔNG HỢP NỘI BỘ</span>
+<h2 id="carpk-occ-title">Ít sai số đếm hơn. Định vị xe tốt hơn.</h2>
+<p><strong>A3-R75 cải thiện cả sai số đếm lẫn chất lượng định vị trong các trường hợp được chọn để phân tích.</strong> Các chỉ số dưới đây đối chiếu trực tiếp với CountGD++ gốc trên cùng dữ liệu che khuất.</p>
+<div class="eval-summary"><div><span>MAE · SAI SỐ ĐẾM TRUNG BÌNH</span><strong><small>Giảm</small>40,41%</strong><p>25,800 → 15,374 · càng thấp càng tốt</p></div><div><span>RMSE · SAI SỐ ĐẾM</span><strong><small>Giảm</small>32,58%</strong><p>30,470 → 20,544 · càng thấp càng tốt</p></div><div><span>F1 · ĐỊNH VỊ TẠI IoU ≥ 0,5</span><strong><small>Tăng</small>5,08 đpt</strong><p>30,92% → 36,00% · điểm phần trăm</p></div></div>
+<figure class="occ-comparison" aria-labelledby="occ-comparison-caption"><figcaption id="occ-comparison-caption"><strong>CARPK-OCC · so sánh trực quan</strong><span>Tập phân tích chọn sau đánh giá · cùng thiết lập suy luận</span></figcaption><div class="occ-chart-legend"><span><i class="baseline" aria-hidden="true"></i>CountGD++ gốc</span><span><i class="candidate" aria-hidden="true"></i>A3-R75</span></div><div class="occ-chart-panels"><div class="occ-chart-viewport" tabindex="0" role="region" aria-label="Biểu đồ cột; cuộn ngang nếu cần"><svg viewBox="0 0 560 310" role="img" aria-labelledby="occ-errors-title occ-errors-desc"><title id="occ-errors-title">Sai số đếm · thấp hơn tốt hơn</title><desc id="occ-errors-desc">So sánh CountGD++ gốc với A3-R75 trên tập CARPK-OCC chọn sau đánh giá. Trục bắt đầu từ 0; MAE: gốc 25,80; R75 15,37. RMSE: gốc 30,47; R75 20,54.</desc><text x="45" y="23" class="occ-chart-title">Sai số đếm · thấp hơn tốt hơn</text><line x1="45" y1="246.0" x2="540" y2="246.0" class="occ-chart-grid"/><text x="36" y="250.0" text-anchor="end" class="occ-chart-tick">0</text><line x1="45" y1="207.2" x2="540" y2="207.2" class="occ-chart-grid"/><text x="36" y="211.2" text-anchor="end" class="occ-chart-tick">7</text><line x1="45" y1="168.39999999999998" x2="540" y2="168.39999999999998" class="occ-chart-grid"/><text x="36" y="172.39999999999998" text-anchor="end" class="occ-chart-tick">14</text><line x1="45" y1="129.60000000000002" x2="540" y2="129.60000000000002" class="occ-chart-grid"/><text x="36" y="133.60000000000002" text-anchor="end" class="occ-chart-tick">21</text><line x1="45" y1="90.79999999999998" x2="540" y2="90.79999999999998" class="occ-chart-grid"/><text x="36" y="94.79999999999998" text-anchor="end" class="occ-chart-tick">28</text><line x1="45" y1="52.0" x2="540" y2="52.0" class="occ-chart-grid"/><text x="36" y="56.0" text-anchor="end" class="occ-chart-tick">35</text><rect x="121.75" y="102.9942857142857" width="44" height="143.0057142857143" class="occ-chart-bar baseline"><title>MAE · Gốc: 25,80</title></rect><text x="143.75" y="93.9942857142857" text-anchor="middle" class="occ-chart-value">25,80</text><rect x="171.75" y="160.78411428571428" width="44" height="85.21588571428572" class="occ-chart-bar candidate"><title>MAE · R75: 15,37</title></rect><text x="193.75" y="151.78411428571428" text-anchor="middle" class="occ-chart-value">15,37</text><text x="168.75" y="271" text-anchor="middle" class="occ-chart-tick">MAE</text><rect x="369.25" y="77.10813324883321" width="44" height="168.8918667511668" class="occ-chart-bar baseline"><title>RMSE · Gốc: 30,47</title></rect><text x="391.25" y="68.10813324883321" text-anchor="middle" class="occ-chart-value">30,47</text><rect x="419.25" y="132.1283436387747" width="44" height="113.87165636122529" class="occ-chart-bar candidate"><title>RMSE · R75: 20,54</title></rect><text x="441.25" y="123.12834363877471" text-anchor="middle" class="occ-chart-value">20,54</text><text x="416.25" y="271" text-anchor="middle" class="occ-chart-tick">RMSE</text></svg></div><div class="occ-chart-viewport" tabindex="0" role="region" aria-label="Biểu đồ cột; cuộn ngang nếu cần"><svg viewBox="0 0 560 310" role="img" aria-labelledby="occ-quality-title occ-quality-desc"><title id="occ-quality-title">Chất lượng định vị · cao hơn tốt hơn</title><desc id="occ-quality-desc">So sánh CountGD++ gốc với A3-R75 trên tập CARPK-OCC chọn sau đánh giá. Trục bắt đầu từ 0; Precision: gốc 35,64; R75 38,77. Recall: gốc 27,30; R75 33,59. F1: gốc 30,92; R75 36,00.</desc><text x="45" y="23" class="occ-chart-title">Chất lượng định vị · cao hơn tốt hơn</text><line x1="45" y1="246.0" x2="540" y2="246.0" class="occ-chart-grid"/><text x="36" y="250.0" text-anchor="end" class="occ-chart-tick">0%</text><line x1="45" y1="207.2" x2="540" y2="207.2" class="occ-chart-grid"/><text x="36" y="211.2" text-anchor="end" class="occ-chart-tick">20%</text><line x1="45" y1="168.39999999999998" x2="540" y2="168.39999999999998" class="occ-chart-grid"/><text x="36" y="172.39999999999998" text-anchor="end" class="occ-chart-tick">40%</text><line x1="45" y1="129.60000000000002" x2="540" y2="129.60000000000002" class="occ-chart-grid"/><text x="36" y="133.60000000000002" text-anchor="end" class="occ-chart-tick">60%</text><line x1="45" y1="90.79999999999998" x2="540" y2="90.79999999999998" class="occ-chart-grid"/><text x="36" y="94.79999999999998" text-anchor="end" class="occ-chart-tick">80%</text><line x1="45" y1="52.0" x2="540" y2="52.0" class="occ-chart-grid"/><text x="36" y="56.0" text-anchor="end" class="occ-chart-tick">100%</text><rect x="81.6" y="176.85803340963326" width="42.9" height="69.14196659036674" class="occ-chart-bar baseline"><title>Precision · Gốc: 35,64%</title></rect><text x="103.05" y="167.85803340963326" text-anchor="middle" class="occ-chart-value">35,64%</text><rect x="130.5" y="170.77806721060904" width="42.9" height="75.22193278939096" class="occ-chart-bar candidate"><title>Precision · R75: 38,77%</title></rect><text x="151.95" y="161.77806721060904" text-anchor="middle" class="occ-chart-value">38,77%</text><text x="127.5" y="271" text-anchor="middle" class="occ-chart-tick">Precision</text><rect x="246.6" y="193.04420157409825" width="42.9" height="52.95579842590175" class="occ-chart-bar baseline"><title>Recall · Gốc: 27,30%</title></rect><text x="268.05" y="184.04420157409825" text-anchor="middle" class="occ-chart-value">27,30%</text><rect x="295.5" y="180.8328173374613" width="42.9" height="65.16718266253869" class="occ-chart-bar candidate"><title>Recall · R75: 33,59%</title></rect><text x="316.95" y="171.8328173374613" text-anchor="middle" class="occ-chart-value">33,59%</text><text x="292.5" y="271" text-anchor="middle" class="occ-chart-tick">Recall</text><rect x="411.6" y="186.02399560643826" width="42.9" height="59.97600439356174" class="occ-chart-bar baseline"><title>F1 · Gốc: 30,92%</title></rect><text x="433.05" y="177.02399560643826" text-anchor="middle" class="occ-chart-value">30,92%</text><rect x="460.5" y="176.16550580099732" width="42.9" height="69.83449419900269" class="occ-chart-bar candidate"><title>F1 · R75: 36,00%</title></rect><text x="481.95" y="167.16550580099732" text-anchor="middle" class="occ-chart-value">36,00%</text><text x="457.5" y="271" text-anchor="middle" class="occ-chart-tick">F1</text></svg></div></div><p class="occ-chart-note">Các trục đều bắt đầu từ 0. Sai số đếm và tỷ lệ phần trăm dùng hai thang đo riêng; bảng bên dưới cung cấp đầy đủ số liệu.</p></figure>
+<div class="table-scroll eval-table" role="region" tabindex="0" aria-label="So sánh trên CARPK-OCC; có thể cuộn ngang"><table><caption>CARPK-OCC · tập phân tích chọn sau đánh giá</caption><thead><tr><th scope="col">Chỉ số</th><th scope="col">CountGD++ gốc</th><th scope="col">Giải pháp A3-R75</th><th scope="col">Cải thiện</th></tr></thead><tbody><tr><th scope="row">MAE<br><small>↓ thấp hơn tốt hơn</small></th><td>25,800</td><td><strong>15,374</strong></td><td><span class="eval-outcome improved">Giảm 40,41%</span></td></tr><tr><th scope="row">RMSE<br><small>↓ thấp hơn tốt hơn</small></th><td>30,470</td><td><strong>20,544</strong></td><td><span class="eval-outcome improved">Giảm 32,58%</span></td></tr><tr><th scope="row">Precision<br><small>↑ cao hơn tốt hơn</small></th><td>35,64%</td><td><strong>38,77%</strong></td><td><span class="eval-outcome improved">Tăng 3,13 điểm %</span></td></tr><tr><th scope="row">Recall<br><small>↑ cao hơn tốt hơn</small></th><td>27,30%</td><td><strong>33,59%</strong></td><td><span class="eval-outcome improved">Tăng 6,29 điểm %</span></td></tr><tr><th scope="row">F1 · IoU ≥ 0,5<br><small>↑ cao hơn tốt hơn</small></th><td>30,92%</td><td><strong>36,00%</strong></td><td><span class="eval-outcome improved">Tăng 5,08 điểm %</span></td></tr><tr><th scope="row">Đếm đúng tuyệt đối<br><small>↑ cao hơn tốt hơn</small></th><td>0,00%</td><td><strong>4,80%</strong></td><td><span class="eval-outcome improved">Tăng 4,80 điểm %</span></td></tr></tbody></table></div>
+<p class="eval-verdict"><strong>Phân tích các trường hợp cải thiện.</strong> Tập này được chọn sau khi xem kết quả để giữ các ảnh R75 có sai số đếm thấp hơn; các chỉ số định vị được chấm sau khi khóa danh sách. Đây là minh họa thế mạnh, không phải ước lượng hiệu quả trên một tập kiểm thử độc lập.</p>
+<p><strong>Đối chiếu toàn bộ nguồn dữ liệu:</strong> MAE 20,355 → 15,326; RMSE 26,205 → 20,130; F1 29,52% → 35,06%. Bảng đầy đủ được giữ trong tệp tải xuống.</p>
+<div class="eval-models"><span><strong>Bản đánh giá:</strong> A3-R75 = 75% trọng số A3 + 25% gốc</span><span><strong>Bốn nhánh demo:</strong> A3 + SigLIP2, A3 + SAM 3, CountGD-Box + SAM 3 và CountGD++ gốc</span></div>
+<details class="eval-details"><summary>Giao thức, cách chọn dữ liệu và giới hạn</summary><div><p>Tập phân tích gồm 500 ảnh che tổng hợp từ 335 ảnh gốc. Nguồn ứng viên gồm 918 ảnh = 459 ảnh gốc × 2 seed che nặng. Trong 600 trường hợp R75 có absolute count error thấp hơn gốc, sắp xếp hash cố định và giữ 500 trường hợp. Không lọc tiếp bằng F1; các ảnh cùng ảnh gốc không phải quan sát độc lập. Không thay thế tập 250 ảnh lấy mẫu hash trước đó: kết quả cũ vẫn được lưu riêng.</p><p>CARPK-OCC ở đây là tên bản tổng hợp nội bộ từ CARPK mirror, không phải chứng nhận tương đương bộ dữ liệu công bố bên ngoài. Tập đã được xem trong phát triển và chọn theo kết quả; không suy ra tốt hơn trên mọi dữ liệu, mức che, màu hoặc quan hệ.</p><p>Cả hai model dùng filtered_pseudo3, resize 800/1333, ngưỡng 0,23; không dùng SigLIP2 trong bảng đếm này. Ghép box một–một tại IoU ≥ 0,5, micro Precision/Recall/F1; giữ GT box của cả xe che hoàn toàn. Tọa độ mirror xywh góc trên trái đã kiểm tra hình học và đối chiếu trực quan, chưa chứng nhận archive gốc tác giả.</p><p>Chấm prediction thật đã lưu; không train hay inference GPU mới. Hai cách ghép box độc lập khớp toàn bộ 1.836 trường hợp. Không có tuyên bố ý nghĩa thống kê hoặc tốc độ tốt hơn.</p></div></details>
+<div class="eval-downloads"><a class="button secondary" href="/assets/carpk-occ-metrics.csv" download>Tải bảng số liệu</a><a class="button secondary" href="/assets/carpk-occ-protocol.json" download>Kết quả &amp; giao thức JSON</a></div>
+</section>
+</article></section>
+<section id="panel-help" class="page-panel document-page" role="tabpanel" aria-labelledby="tab-help" tabindex="-1" hidden>
+<div class="page-heading">
+<div>
+<h1>Hướng dẫn sử dụng</h1>
+<p>Viết mô tả, đọc kết quả và hiểu giới hạn của mô hình.</p>
+</div>
+</div>
+<article class="document-surface help-document">
+<h3>Đếm theo loại phương tiện</h3>
+<p>
+<code>car</code>, <code>vehicle</code>, <code>motorcycle</code>, <code>bicycle</code>, <code>bus</code>, <code>truck</code>, <code>van</code>; hoặc tên tương ứng bằng tiếng Việt.</p>
+<h3>Màu sắc cho nhiều loại xe</h3>
+<p>
+<code>green bus</code>, <code>black truck</code>, <code>xe máy màu đỏ</code>, <code>pink car</code>. SigLIP2 kiểm tra màu theo đúng loại phương tiện được yêu cầu.</p>
+<h3>Mô tả tự do và vị trí</h3>
+<p>Thử <code>a blue delivery van</code>, <code>a yellow school bus</code> hoặc <code>red car on the left</code>. Trái/phải và trên/dưới ảnh được lọc theo tâm box trong mỗi nửa ảnh.</p>
+<h3>Đếm xe máy có người lái</h3>
+<p>
+<code>motorcycle with rider</code> hoặc <code>xe máy có người lái</code>. Số đếm là số phương tiện, không phải số người.</p>
+<h3>Những điều cần lưu ý</h3>
+<p>Có thể nhập mô tả mới, không bị giới hạn vào danh sách prompt mẫu. Chấp nhận câu không đồng nghĩa mô hình luôn hiểu đúng: quan hệ phức tạp, phủ định và nhiều điều kiện có thể sai. Số đếm là dự đoán; hãy kiểm tra các box. Nhánh open-text mở rộng chưa có benchmark đầy đủ như các nhánh cũ.</p>
+<p>Mỗi ảnh tối đa 10 MB, 24 megapixel. Các tác vụ được chạy lần lượt trên GPU. Nhấn <kbd>Ctrl</kbd> + <kbd>Enter</kbd> để chạy, <kbd>Esc</kbd> để đóng cửa sổ.</p>
+</article>
+</section>
+</main>
+</div>
+</div>
+<dialog id="zoom-dialog" class="zoom-dialog" aria-labelledby="zoom-title">
+<header>
+<h2 id="zoom-title">Xem chi tiết ảnh</h2>
+<div>
+<label for="zoom-range">Phóng đại</label>
+<input id="zoom-range" type="range" min="1" max="3" step="0.25" value="1">
+<button type="button" data-close class="icon-button" aria-label="Đóng">
+<svg class="icon" aria-hidden="true">
+<use href="#i-close"/>
+</svg>
+</button>
+</div>
+</header>
+<div id="zoom-viewport" class="zoom-viewport">
+<div id="zoom-content">
+</div>
+</div>
+</dialog>
+<div id="toast" class="toast" role="status" hidden>
+</div>
+</body>
+</html>

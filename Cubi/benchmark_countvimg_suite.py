@@ -26,7 +26,6 @@ from PIL import Image
 import torch
 import torchvision.ops as ops
 from tqdm import tqdm
-from ultralytics import SAM
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "CountGD"))
@@ -633,6 +632,7 @@ def main():
     else:
         sam_tag = "SAM 2.1"
         print(f"[*] Initializing SAM 2.1 from {sam_path.name} on {args.device}...")
+        from ultralytics import SAM
         sam_model = SAM(str(sam_path))
         sam_model.is_sam3_semantic = False
 

@@ -13,6 +13,17 @@ Mã nghiên cứu cho hai phương pháp đếm phương tiện theo mô tả v�
 - [Suy luận hai lượt](src/countgdpp_inference.py), [lọc SigLIP2 dùng trong benchmark](scripts/run_siglip_semantics.py), [lọc mô tả tự do dùng trong demo](web_demo/open_text.py) và [cấu hình ngưỡng của demo](web_demo/open_text_policy.json).
 - [Huấn luyện CountGD-Box tối ưu AP](Cubi/train_countgd_box_ap_optimized.py), [huấn luyện với vật che](Cubi/train_countgd_box_occ.py), [benchmark](Cubi/benchmark_countvimg_suite.py) và [suy luận CountGD-Box + SAM 3](Cubi/infer_sam3.py).
 
+## Chạy web demo đầy đủ trên một máy
+
+```bash
+git clone https://github.com/khanhduy2311/Text-Guided-Zero-Shot-Vehicle-Counting-under-Occlusion.git
+cd Text-Guided-Zero-Shot-Vehicle-Counting-under-Occlusion
+bash web_demo/install/setup.sh
+.demo-envs/detector/bin/python -m web_demo.run
+```
+
+Mở **http://127.0.0.1:7860**. Bộ cài chuẩn bị backend, tải checkpoint và kiểm tra SHA-256. [Yêu cầu phần cứng, bốn nhánh và cách chạy offline](web_demo/install/README.md).
+
 ## Chuẩn bị và chạy
 
 Sau khi clone, lấy hai backend upstream ở các commit đã ghim và áp dụng bản sửa deformable attention dùng khi train A3.

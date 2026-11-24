@@ -1,0 +1,6 @@
+{
+  "version": "execution_v1",
+  "residency": "auto",
+  "resident_available_gib": 8,
+  "optimize_crops": true
+}
