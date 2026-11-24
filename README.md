@@ -4,6 +4,8 @@ Mã nghiên cứu cho hai phương pháp đếm phương tiện theo mô tả v�
 
 **Checkpoint nhóm đã train** · [CountGD++ A3 — checkpoint_best.pth](https://github.com/khanhduy2311/Text-Guided-Zero-Shot-Vehicle-Counting-under-Occlusion/releases/download/countlab-v1/checkpoint_best.pth) · [CountGD-Box của Cubi — checkpoint_best_ap.pth](https://github.com/khanhduy2311/Text-Guided-Zero-Shot-Vehicle-Counting-under-Occlusion/releases/download/countlab-v1/checkpoint_best_ap.pth) · [Trọng số demo và SHA-256](checkpoints/README.md)
 
+**Dữ liệu đánh giá** · [Tải CARPK-OCC Local: ảnh sạch, ba mức che, mask và nhãn](datasets/CARPK-OCC-Local/README.md)
+
 | Phương pháp | Huấn luyện | Suy luận |
 |---|---|---|
 | CountGD++ A3 + SigLIP2 | Teacher cố định nhận ảnh sạch. Student học từ ảnh có vật che tổng hợp, loss phát hiện và tín hiệu đặc trưng của Teacher. | CountGD++ đề xuất vị trí xe. SigLIP2 so vùng ảnh với mô tả để lọc theo prompt. |
