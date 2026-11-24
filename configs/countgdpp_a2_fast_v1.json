@@ -1,0 +1,95 @@
+{
+  "seed": 331,
+  "bundle": "data/zero_shot_v1",
+  "model_config": "CountGDPlusPlus/config/cfg_fscd147_test.py",
+  "provenance": "configs/pretrained_countgdpp_official.json",
+  "sources": [
+    "fsc147",
+    "visdrone",
+    "ua_detrac"
+  ],
+  "epochs": 3,
+  "batch_size": 2,
+  "gradient_accumulation": 4,
+  "learning_rate": 1e-05,
+  "weight_decay": 0.0001,
+  "gradient_clip": 0.1,
+  "short_side": 640,
+  "max_size": 1024,
+  "num_queries": 900,
+  "amp": "bfloat16",
+  "freeze_keywords": [
+    "backbone.0",
+    "bert"
+  ],
+  "gradient_checkpointing": false,
+  "allocator_limit_gib": 9.0,
+  "free_memory_reserve_gib": 2.5,
+  "horizontal_flip_p": 0.5,
+  "loss_config": {
+    "cost_class": 5.0,
+    "cost_geometry": 1.0,
+    "cost_giou": 0.0,
+    "weight_class": 5.0,
+    "weight_box": 1.0,
+    "weight_point": 1.0,
+    "weight_giou": 0.0,
+    "alpha": 0.25,
+    "gamma": 2.0,
+    "auxiliary_weight": 1.0,
+    "intermediate_weight": 1.0
+  },
+  "backend": "CountGD++",
+  "backend_directory": "CountGDPlusPlus",
+  "phase": "A2 ordinary augmentation plus controlled occlusion curriculum",
+  "save_every_updates": 250,
+  "warmup_updates": 200,
+  "selection_metric": "single.macro_dataset_mae",
+  "validation_every_epochs": 1,
+  "box_threshold": 0.23,
+  "text_threshold": 0.0,
+  "pseudo_threshold": 0.23,
+  "num_pseudo_exemplars": 3,
+  "box_iou_threshold": 0.5,
+  "point_radius_fraction": 0.02,
+  "sampling": "50% FSC147, 25% VisDrone, 25% UA-DETRAC; shuffled cycles with full eligible coverage per balanced epoch",
+  "dense_training_policy": "Same explicit seven-image exclusion as A1 v1; frozen source manifests and full validation retained.",
+  "ema": false,
+  "num_workers": 2,
+  "reference_baseline": "outputs/countgdpp_baseline_v1/report.json",
+  "budget_note": "Runtime continuation of A2: physical batch 2 x accumulation 4, same per-image objective and effective batch 8; disable activation recomputation, CPU prefetch 2. 9 GiB allocator cap leaves room for CUDA overhead within approximately 10 GiB total. Same 12174 planned updates; batching/padding/RNG consumption differs from original runtime.",
+  "reference_a1_best": "outputs/countgdpp_a1_resume_20261105T171211Z/best.json",
+  "reference_a1_selection": "outputs/countgdpp_a1_resume_20261105T171211Z/selection.json",
+  "occlusion": {
+    "seed": 331,
+    "max_attempts": 12,
+    "curriculum": [
+      {
+        "probability": 0.35,
+        "max_added_box_fraction": 0.2,
+        "max_image_fraction": 0.08,
+        "occluders": 1
+      },
+      {
+        "probability": 0.55,
+        "max_added_box_fraction": 0.35,
+        "max_image_fraction": 0.12,
+        "occluders": 2
+      },
+      {
+        "probability": 0.7,
+        "max_added_box_fraction": 0.5,
+        "max_image_fraction": 0.16,
+        "occluders": 3
+      }
+    ],
+    "fixed_validation": {
+      "probability": 1.0,
+      "max_added_box_fraction": 0.35,
+      "max_image_fraction": 0.15,
+      "occluders": 2
+    },
+    "policy": "Vehicle box sources only; FSC147 point-only unchanged; preserve all labels/counts; no object copy-paste. Protect heavy naturally occluded boxes, cap partial/unknown boxes. Geometry proxy, not actual pixel visibility guarantee."
+  },
+  "cpu_threads": 4
+}

@@ -1,0 +1,6 @@
+[submodule "CountGD"]
+	path = CountGD
+	url = https://github.com/niki-amini-naieni/CountGD.git
+[submodule "CountGDPlusPlus"]
+	path = CountGDPlusPlus
+	url = https://github.com/niki-amini-naieni/CountGDPlusPlus.git

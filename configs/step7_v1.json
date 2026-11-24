@@ -1,0 +1,31 @@
+{
+  "backend": "CountGD++",
+  "bundle": "data/zero_shot_v1",
+  "sources": ["fsc147", "visdrone", "ua_detrac"],
+  "model_config": "CountGDPlusPlus/config/cfg_fscd147_test.py",
+  "short_side": 640,
+  "max_size": 1024,
+  "crop_short_side": 800,
+  "crop_max_size": 1280,
+  "num_queries": 900,
+  "box_threshold": 0.23,
+  "text_threshold": 0.0,
+  "box_iou_threshold": 0.5,
+  "point_radius_fraction": 0.02,
+  "tile_size": 800,
+  "tile_overlap": 0.25,
+  "crop_border_margin_px": 2,
+  "pseudo_filter": {
+    "threshold": 0.35,
+    "minimum_side_px": 12,
+    "border_margin_px": 8,
+    "candidate_limit": 50,
+    "count": 3,
+    "duplicate_iou": 0.5
+  },
+  "merge": {"iou": 0.55, "center_fraction": 0.35, "max_size_ratio": 2.0},
+  "allocator_limit_gib": 6.0,
+  "free_memory_reserve_gib": 2.0,
+  "cpu_threads": 4,
+  "policy": "Source validation only, frozen best A1-A5 checkpoint. Fixed five inference modes; select macro dataset MAE, prefer earlier/simple mode on ties. Confidence/size/border/spatial diversity are pseudo-exemplar proxies, not verified visibility labels. No target tuning; no automatic retries or step 8/9."
+}

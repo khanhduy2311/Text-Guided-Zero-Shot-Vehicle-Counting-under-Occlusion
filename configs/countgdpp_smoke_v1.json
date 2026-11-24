@@ -1,0 +1,48 @@
+{
+  "seed": 331,
+  "bundle": "data/zero_shot_v1",
+  "model_config": "CountGDPlusPlus/config/cfg_fscd147_test.py",
+  "provenance": "configs/pretrained_countgdpp_official.json",
+  "sources": [
+    "fsc147",
+    "visdrone",
+    "ua_detrac"
+  ],
+  "train_per_source": 16,
+  "validation_per_source": 4,
+  "epochs": 2,
+  "batch_size": 1,
+  "gradient_accumulation": 4,
+  "learning_rate": 1e-05,
+  "weight_decay": 0.0001,
+  "gradient_clip": 0.1,
+  "short_side": 640,
+  "max_size": 1024,
+  "num_queries": 900,
+  "amp": "bfloat16",
+  "freeze_keywords": [
+    "backbone.0",
+    "bert"
+  ],
+  "gradient_checkpointing": true,
+  "allocator_limit_gib": 7.0,
+  "free_memory_reserve_gib": 2.0,
+  "save_every_micro_steps": 24,
+  "horizontal_flip_p": 0.0,
+  "loss_config": {
+    "cost_class": 5.0,
+    "cost_geometry": 1.0,
+    "cost_giou": 0.0,
+    "weight_class": 5.0,
+    "weight_box": 1.0,
+    "weight_point": 1.0,
+    "weight_giou": 0.0,
+    "alpha": 0.25,
+    "gamma": 2.0,
+    "auxiliary_weight": 1.0,
+    "intermediate_weight": 1.0
+  },
+  "backend": "CountGD++",
+  "backend_directory": "CountGDPlusPlus",
+  "reference_selection": "outputs/smoke_v1/sample_selection.json"
+}

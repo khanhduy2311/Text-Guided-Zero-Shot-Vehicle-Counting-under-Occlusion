@@ -1,0 +1,42 @@
+diff --git a/models/GroundingDINO/ms_deform_attn.py b/models/GroundingDINO/ms_deform_attn.py
+index 9d0877d..b0ac767 100644
+--- a/models/GroundingDINO/ms_deform_attn.py
++++ b/models/GroundingDINO/ms_deform_attn.py
+@@ -28,8 +28,9 @@ from torch.nn.init import constant_, xavier_uniform_
+ try:
+     # from groundingdino import _C
+     import MultiScaleDeformableAttention as _C
+-except:
+-    warnings.warn("Failed to load custom C++ ops. Running on CPU mode Only!")
++except ImportError:
++    _C = None
++    warnings.warn("Custom deformable attention extension unavailable; using PyTorch fallback on CPU/GPU.")
+ 
+ 
+ # helpers
+@@ -328,10 +329,11 @@ class MultiScaleDeformableAttention(nn.Module):
+                 )
+             )
+     
+-        if torch.cuda.is_available() and value.is_cuda:
+-            halffloat = False
+-            if value.dtype == torch.float16:
+-                halffloat = True
++        if torch.cuda.is_available() and value.is_cuda and _C is not None:
++            # The native kernel dispatches float32/float64. Run both AMP
++            # formats in float32, then restore the activation dtype.
++            output_dtype = value.dtype
++            if output_dtype in (torch.float16, torch.bfloat16):
+                 value = value.float()
+                 sampling_locations = sampling_locations.float()
+                 attention_weights = attention_weights.float()
+@@ -345,8 +347,7 @@ class MultiScaleDeformableAttention(nn.Module):
+                 self.im2col_step,
+             )
+ 
+-            if halffloat:
+-                output = output.half()
++            output = output.to(output_dtype)
+         else:
+             output = multi_scale_deformable_attn_pytorch(
+                 value, spatial_shapes, sampling_locations, attention_weights

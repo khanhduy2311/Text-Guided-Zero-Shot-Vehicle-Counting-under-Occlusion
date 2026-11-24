@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "object_detector": "A3",
+  "subject_detector": "official",
+  "policy": {"cosine_margin": 0.02, "association_margin": 0.1, "context_expansion": 0.15, "minimum_side_px": 12},
+  "calibration": "Uncalibrated zero-shot defaults; vehicle-type calibration does not establish color/relation accuracy.",
+  "queries": [
+    {"id":"all_vehicles","kind":"class","object_prompt":"vehicle"},
+    {"id":"red_cars","kind":"attribute","object_prompt":"vehicle",
+     "positive":["a photo of a red car.","a traffic camera photo of a car with red bodywork."],
+     "negative":["a white car.","a black car.","a blue car.","a silver car.","a gray car.","a green car.","a yellow car.","a brown car.","a red motorcycle.","a red bus.","a red truck.","a red bicycle.","a red building.","background with no car."]},
+    {"id":"motorcycles_with_green_jacket_rider","kind":"relation","object_prompt":"vehicle","subject_prompt":"person","relation":"riding","subject_region":"upper_body",
+     "positive":["a person riding a motorcycle.","a person seated on a motorcycle."],
+     "negative":["a person standing beside a parked motorcycle.","a person walking past a motorcycle.","a parked motorcycle without a rider.","a person riding a bicycle.","a person standing beside a car.","a person inside a car."],
+     "subject_positive":["a person wearing a green jacket.","a motorcycle rider wearing a green jacket."],
+     "subject_negative":["a person wearing a red jacket.","a person wearing a blue jacket.","a person wearing a black jacket.","a person wearing a white jacket.","a person wearing a yellow jacket.","a person wearing a gray jacket.","a person with a green object in the background but not wearing green."]}
+  ]
+}

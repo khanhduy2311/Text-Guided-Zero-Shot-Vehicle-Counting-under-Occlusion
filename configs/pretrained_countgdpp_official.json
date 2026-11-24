@@ -1,0 +1,19 @@
+{
+  "backend": "CountGD++",
+  "path": "CountGDPlusPlus/checkpoints/countgdplusplus_official.safetensors",
+  "format": "safetensors",
+  "sha256": "94eabe4e2595dac1e04cc1703641458b13c1c624ce10072ba57dd96b625a41f5",
+  "size_bytes": 937560192,
+  "verified_utc_date": "2026-11-04",
+  "repository": "https://github.com/niki-amini-naieni/CountGDPlusPlus",
+  "code_revision": "2ecbc4331d6730d017f52a4a97bbcbae7d5d714a",
+  "hf_repository": "nikigoli/CountGDPlusPlus",
+  "hf_revision": "06bd674ecd2d18ea55ec0dd9183fa24603dfa7e1",
+  "weights_url": "https://huggingface.co/nikigoli/CountGDPlusPlus/blob/06bd674ecd2d18ea55ec0dd9183fa24603dfa7e1/model.safetensors",
+  "hash_verification": "Downloaded bytes match size and LFS SHA-256 from the official author's pinned HF revision linked by the official GitHub README.",
+  "paper": "https://arxiv.org/html/2512.23351v2",
+  "declared_counting_training": "FSC147 training split plus 1000 synthetic mosaic images, on a GroundingDINO foundation.",
+  "target_protocol": "No local CARPK/TRANCOS-finetuned weights are used. Official paper reports no fine-tuning on other evaluation datasets. Foundation pretraining image overlap is not independently audited.",
+  "source_validation_caveat": "Official FSC147 pretraining predates local duplicate/quarantine filtering. The local filter cannot undo checkpoint exposure; FSC147 smoke validation is a diagnostic, not a newly independent holdout.",
+  "runtime_patch": "Enable the existing PyTorch deformable-attention fallback on CUDA when the custom extension is unavailable. Patch and code hashes are recorded in each run."
+}

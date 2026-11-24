@@ -1,0 +1,120 @@
+{
+  "version": 2,
+  "object_detector": "A3",
+  "subject_detector": "official",
+  "policy": {
+    "cosine_margin": 0.02,
+    "association_margin": 0.1,
+    "context_expansion": 0.15,
+    "minimum_side_px": 12
+  },
+  "calibration": "Development correction after reviewing old source-validation failure modes. Not a new independent test; .25 color/.4 relation preferences follow legacy decision thresholds, no metric-based grid search.",
+  "queries": [
+    {
+      "id": "red_cars",
+      "kind": "attribute",
+      "object_prompt": "car",
+      "positive": [
+        "a photo of a red car.",
+        "a car with red bodywork."
+      ],
+      "negative": [
+        "a blue car.",
+        "a white car.",
+        "a black car.",
+        "a gray car.",
+        "a silver car.",
+        "a yellow car.",
+        "a green car.",
+        "a brown car.",
+        "a motorcycle.",
+        "a truck.",
+        "a bus.",
+        "background with no car."
+      ],
+      "target_type": "car",
+      "target_color": "red"
+    },
+    {
+      "id": "blue_cars",
+      "kind": "attribute",
+      "object_prompt": "car",
+      "positive": [
+        "a photo of a blue car.",
+        "a car with blue bodywork."
+      ],
+      "negative": [
+        "a red car.",
+        "a white car.",
+        "a black car.",
+        "a gray car.",
+        "a silver car.",
+        "a yellow car.",
+        "a green car.",
+        "a brown car.",
+        "a motorcycle.",
+        "a truck.",
+        "a bus.",
+        "background with no car."
+      ],
+      "target_type": "car",
+      "target_color": "blue"
+    },
+    {
+      "id": "riding_motorcycles",
+      "kind": "relation",
+      "object_prompt": "motorcycle",
+      "subject_prompt": "person",
+      "relation": "riding",
+      "positive": [
+        "a person riding a motorcycle.",
+        "a person seated on a motorcycle."
+      ],
+      "negative": [
+        "a person standing beside a parked motorcycle.",
+        "a person walking past a motorcycle.",
+        "a parked motorcycle without a rider.",
+        "a person riding a bicycle.",
+        "a person standing beside a car.",
+        "a person inside a car."
+      ],
+      "target_type": "motorcycle"
+    },
+    {
+      "id": "green_riders",
+      "kind": "relation",
+      "object_prompt": "motorcycle",
+      "subject_prompt": "person",
+      "relation": "riding",
+      "subject_region": "upper_body",
+      "positive": [
+        "a person riding a motorcycle.",
+        "a person seated on a motorcycle."
+      ],
+      "negative": [
+        "a person standing beside a parked motorcycle.",
+        "a person walking past a motorcycle.",
+        "a parked motorcycle without a rider.",
+        "a person riding a bicycle.",
+        "a person standing beside a car.",
+        "a person inside a car."
+      ],
+      "subject_positive": [
+        "a person wearing a green shirt.",
+        "a motorcycle rider wearing green upper-body clothing."
+      ],
+      "subject_negative": [
+        "a person wearing a red jacket.",
+        "a person wearing a blue jacket.",
+        "a person wearing a black jacket.",
+        "a person wearing a white jacket.",
+        "a person wearing a yellow jacket.",
+        "a person wearing a gray jacket.",
+        "a person with a green object in the background but not wearing green."
+      ],
+      "target_type": "motorcycle",
+      "target_color": "green"
+    }
+  ],
+  "semantic_engine": "balanced_contrasts_vehicle_centered_v2"
+}

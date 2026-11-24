@@ -1,0 +1,60 @@
+{
+  "version": "open_text_v2",
+  "revision": "motorcycle_type_20261117_r3",
+  "independent_type_guard": {
+    "nouns": ["motorcycle"],
+    "view": "tight_and_inset",
+    "preference_min": 0.5,
+    "center_policy": "conflicting_vehicle_veto",
+    "center_inset_fraction": 0.25,
+    "center_preference_min": 0.5,
+    "conflicting_types": ["car", "van", "pickup truck", "truck", "bus", "train", "tractor", "trailer"]
+  },
+  "audit_legacy_car": false,
+  "detector_min": 0.23,
+  "nms_iou": 0.5,
+  "max_candidates": 100,
+  "proposal_tiles": false,
+  "color_preference_min": 0.25,
+  "description_preference_min": 0.25,
+  "query_vs_noun_min": 0.1,
+  "type_preference_min": 0.25,
+  "color_type_mode": "conditioned",
+  "type_families": {
+    "car": [
+      "van",
+      "pickup truck"
+    ],
+    "truck": [
+      "pickup truck"
+    ]
+  },
+  "crop_views": [
+    "tight",
+    "inset",
+    "context"
+  ],
+  "color_views": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "description_views": [
+    0.6,
+    0.0,
+    0.4
+  ],
+  "type_views": [
+    0.8,
+    0.0,
+    0.2
+  ],
+  "type_templates": "semantic_expert_features.TYPE_TEXT + trailer/wheel",
+  "color_proposals": "noun + full positive description",
+  "cross_prompt_nms": "after semantic verification",
+  "vietnamese_color_counterfactuals": true,
+  "part_counterexamples": [
+    "trailer",
+    "vehicle wheel"
+  ]
+}

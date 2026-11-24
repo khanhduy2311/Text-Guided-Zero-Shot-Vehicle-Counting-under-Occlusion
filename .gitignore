@@ -1,0 +1,16 @@
+/env/
+/.venv/
+/data/
+/outputs/
+/checkpoints/
+/runs/
+/Cubi/weights/
+/Cubi/outputs/
+/Cubi/node_modules/
+__pycache__/
+*.py[cod]
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+.env
